@@ -9,8 +9,8 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
-  sendResentSuccessEmail,
-} from "../mailtrap/Emails.js";
+  sendPasswordResetSuccessEmail,
+} from "../nodemailer/nodemailer.js";
 
 const clientUrl = process.env.CLIENT_URL;
 
@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
     });
 
     await user.save();
-    generateTokenAndSetcookies(res, user._id);
+    // generateTokenAndSetcookies(res, user._id);
     await sendVerificationEmail(user.email, verificationToken);
 
     res.status(201).json({
@@ -97,11 +97,15 @@ export const login = async (req, res) => {
         .status(401)
         .json({ success: false, message: "incrrect password try again" });
     }
-
     generateTokenAndSetcookies(res, user._id);
     user.lastloginDate = Date.now();
     await user.save();
-    res.status(200).json({ success: true, message: "Logged in successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      user: { ...user, password: null },
+    });
+    return user;
   } catch (e) {
     console.log(e.message);
     res.status(404).json({ success: false, message: "Couldn't login" });
@@ -115,11 +119,9 @@ export const logout = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  console.log(email);
   try {
     const user = await User.findOne({ email });
 
-    console.log(user);
     if (!user) {
       return res
         .status(404)
@@ -168,12 +170,11 @@ export const resetPassword = async (req, res) => {
     const hashPassword = await bcryptjs.hash(password, 10);
 
     user.password = hashPassword;
-    console.log(hashPassword);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpireAtDate = undefined;
 
     await user.save();
-    await sendResentSuccessEmail(user.email);
+    await sendPasswordResetSuccessEmail(user.email);
 
     res.status(200).json({ success: true, message: "updated new password" });
   } catch (error) {
@@ -185,16 +186,16 @@ export const resetPassword = async (req, res) => {
 };
 
 export const checkAuth = async (req, res) => {
-  console.log(req.userId);
   try {
     const user = await User.findById(req.userId).select("-password");
     if (!user) {
       return res
         .status(400)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "User not found", user });
     }
 
-    res.status(200).json({ success: true, message: user });
+    res.status(200).json({ success: true, message: user, user });
+    return user;
   } catch (error) {
     console.log("error in checkAuth", error);
     res.status(400).json({ success: false, message: error.message });

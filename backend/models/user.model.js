@@ -23,6 +23,20 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    registeredEvents: [
+      {
+        eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Events" },
+        status: {
+          type: String,
+          enum: ["Registered", "Pending", "Cancelled"],
+          default: "Registered",
+        },
+      },
+    ],
     resetPasswordToken: String,
     resetPasswordExpireAtDate: Date,
     verificationToken: String,

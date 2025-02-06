@@ -34,7 +34,7 @@ export const VERIFICATION_COMPLETE_EMAIL = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verify Your Email</title>
+  <title>Verification Completed ✅ Hooray 🙌🏻!! </title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
   <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
@@ -44,7 +44,7 @@ export const VERIFICATION_COMPLETE_EMAIL = `
     <p>Hello,</p>
     <p>Thank you for verification , your account is verified</p>
     <div style="text-align: center; margin: 30px 0;">
-      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">{go back to site url}</span>
+    <a href="{go back to site url}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Visit Website </a>
     </div>
     <p>Best regards,<br>Your App Team</p>
   </div>
