@@ -102,16 +102,16 @@ const Navbar = () => {
                 <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
               </svg>
             </button>
-            <ui
+            <div
               className={`${
                 Showstore
                   ? "flex flex-col px-5 absolute top-[60px] z-50 rounded-[10px] p-2 overflow-auto focus:outline-none text-lg text-[#FFA116] shadow-lg gap-2 bg-white dark:bg-gray-800 transform opacity-100 scale-100"
                   : "hidden"
               }`}
             >
-              <li>Redeem</li>
-              <li>Premium</li>
-            </ui>
+              <Link to="/store">Redeem</Link>
+              <Link to="/premium">Premium</Link>
+            </div>
           </li>
         </ul>
       </div>
@@ -145,7 +145,10 @@ const Navbar = () => {
               </button>
 
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 border">
+                <div
+                  onClick={() => setIsProfileOpen((prev) => !prev)}
+                  className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 border"
+                >
                   <div className="flex justify-center">
                     <div className="h-10 w-10 rounded-full mt-2  bg-gray-200 flex items-center justify-center">
                       {user?.profileImage ? (

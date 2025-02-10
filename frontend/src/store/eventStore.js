@@ -10,6 +10,7 @@ axios.defaults.withCredentials = true;
 
 export const useEventStore = create((set) => ({
   events: [],
+  event: {},
   error: null,
   isLoading: true,
   domainEvents: [],
@@ -24,6 +25,19 @@ export const useEventStore = create((set) => ({
     }
   },
 
+  fetchEventById: async (eventId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.post(`${API_URL}/geteventsbyid`, {
+        id: eventId,
+      });
+      set({ event: response.data.event, isLoading: false });
+      // console.log(response.data.event);
+    } catch (error) {
+      set({ error: "Error fetching events", isLoading: false });
+    }
+  },
+
   registerForEvent: async (eventId, userId) => {
     set({ isLoading: true, error: null });
     try {
@@ -31,17 +45,21 @@ export const useEventStore = create((set) => ({
         userId,
       });
 
-      // Update the event list with the new attendee
       set((state) => ({
         events: state.events.map((event) =>
           event._id === eventId
-            ? { ...event, attendees: [...event.attendees, userId] }
+            ? {
+                ...event,
+                registered: event.registered
+                  ? [...event.registered, userId]
+                  : [userId],
+              }
             : event
         ),
         isLoading: false,
       }));
 
-      return response.data;
+      console.log(response.data);
     } catch (error) {
       set({
         isLoading: false,
@@ -62,6 +80,7 @@ export const useEventStore = create((set) => ({
       formData.append("domain", eventData.domain);
       formData.append("location", eventData.location);
       formData.append("event_date", eventData.date); // Correct name for event date
+      formData.append("event_time", eventData.time); // Correct name for event date
       formData.append("community", eventData.community);
       formData.append("image", eventData.image); // Attach the image file
 

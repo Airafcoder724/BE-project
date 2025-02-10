@@ -1,31 +1,82 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { Clock, MapPin, Calendar } from "lucide-react";
+import { formatDate } from "../utils/Date";
 const Item = ({ event, handleRegistertion, userId }) => {
-  const isRegistered = event.attendees.includes(userId);
+  const isRegistered = event.registered?.includes(userId);
+  const formatedDate = formatDate(event.event_date);
+
+  const date = formatedDate.split(",")[0] + "," + formatedDate.split(",")[1];
+  const time = formatedDate.split(",")[2];
+  const truncateText = (text, wordCount) => {
+    const words = text.split(" ");
+    if (words.length > wordCount) {
+      return words.slice(0, wordCount).join(" ") + "...";
+    }
+    return text;
+  };
 
   return (
-    <div className="w-full max-w-[300px] mx-auto transform transition-transform duration-300 hover:scale-105 mb-6">
-      <Link to={`/events/${event._id}`}>
-        <img
-          onClick={() => window.scrollTo(0, 0)}
-          src={event.image_url}
-          alt="event image"
-          className="w-full h-[200px] object-cover rounded-[30px] border border-black"
-        />
+    <div className="w-72 bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+      {/* Section 1: Image */}
+      <Link to={`/event/${event._id}`}>
+        <div className="relative w-full h-44 overflow-hidden">
+          <img
+            onClick={() => window.scrollTo(0, 0)}
+            src={event.image_url}
+            alt={event.name}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </div>
       </Link>
-      <p className="text-lg font-bold mt-2 text-center">{event.name}</p>
-      <div className="flex justify-center gap-2 mt-1"></div>
-      <div className="flex justify-center mt-3">
+
+      {/* title and description  */}
+      <div className="h-[125px] p-4 border-b">
+        <h3 className="font-bold text-lg text-gray-800 mb-2">{event.name}</h3>
+        <p className="text-sm text-gray-600 line-clamp-2">
+          Techfest presents{" "}
+          {truncateText(event.description, 5) ||
+            "Join us for an amazing event filled with innovation and technology"}
+        </p>
+      </div>
+
+      {/* Section 3: Event Details */}
+      <div className="p-4">
+        <div className="flex justify-between mb-4">
+          {/* Left subsection */}
+          <div className="space-y-2">
+            <div className="flex items-center text-gray-600">
+              <MapPin className="w-4 h-4 mr-2" />
+              <span className="text-sm line-clamp-1">
+                {event.location || "Venue TBA"}
+              </span>
+            </div>
+            <div className="flex items-center text-gray-600">
+              <Clock className="w-4 h-4 mr-2" />
+              <span className="text-sm">{time || "9:00 PM"}</span>
+            </div>
+          </div>
+
+          {/* Right subsection */}
+          <div className="text-right space-y-2">
+            <div className="flex items-center justify-end text-gray-600">
+              <Calendar className="w-4 h-4 mr-2" />
+              <span className="text-sm">{date || "TBA"}</span>
+            </div>
+            <div className="text-green-600 font-medium">₹Free</div>
+          </div>
+        </div>
+
+        {/* Register Button */}
         {!isRegistered ? (
           <button
             onClick={() => handleRegistertion(event._id)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors duration-300 font-medium"
           >
             Register
           </button>
         ) : (
-          <button className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition">
+          <button className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors duration-300 font-medium">
             Done!!
           </button>
         )}

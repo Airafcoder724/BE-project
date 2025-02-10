@@ -6,8 +6,8 @@ import wp_icon from "../assets/Assets/Frontend_Assets/whatsapp_icon.png";
 
 const Footer = () => {
   return (
-    <div className="flex flex-col justify-center items-center gap-[5px]">
-      <div className="flex items-center gap-[7px]">
+    <div className="flex flex-col justify-center  items-center gap-[5px]">
+      <div className="flex items-center  gap-[7px]">
         <img
           src={footer_logo}
           alt="Logo"

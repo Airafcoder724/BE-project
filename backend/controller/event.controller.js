@@ -1,19 +1,28 @@
 import mongoose from "mongoose";
 import { Event } from "../models/events.model.js";
 import { uploadOnCloudinary } from "../utitls/cloudinary.js";
+import { User } from "../models/user.model.js";
 
 export const createEvents = async (req, res) => {
-  const { name, domain, description, location, event_date, community } =
-    req.body;
+  const {
+    name,
+    domain,
+    description,
+    location,
+    event_date,
+    event_time,
+    community,
+  } = req.body;
   const localFilePath = req.file.path;
   try {
     if (
-      !name ||
-      !domain ||
-      !description ||
-      !location ||
-      !event_date ||
-      !community
+      (!name ||
+        !domain ||
+        !description ||
+        !location ||
+        !event_date ||
+        !event_time,
+      !community)
     ) {
       throw new Error("All fields are required");
     }
@@ -25,6 +34,7 @@ export const createEvents = async (req, res) => {
       description,
       location,
       event_date,
+      event_time,
       community,
       image_url: url,
     });
@@ -66,7 +76,7 @@ export const getEvents = async (req, res) => {
 
 export const getEventById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.body;
     const event = await Event.findById(id);
     if (!event) {
       return res
@@ -145,45 +155,96 @@ export const getDomainEvents = async (req, res) => {
 //   }
 // };
 
+// export const registerEvent = async (req, res) => {
+//   try {
+//     const { eventId } = req.params;
+//     const { userId } = req.body;
+
+//     // Prevent multiple response attempts
+//     let responseSent = false;
+
+//     // Check for existing registration
+//     const existingEvent = await Event.findById(eventId);
+//     if (!existingEvent) {
+//       if (!responseSent) {
+//         responseSent = true;
+//         return res.status(404).json({ message: "Event not found" });
+//       }
+//     }
+
+//     if (existingEvent.attendees.includes(userId)) {
+//       if (!responseSent) {
+//         responseSent = true;
+//         return res.status(400).json({ message: "Already registered" });
+//       }
+//     }
+
+//     // Add user to attendees
+//     existingEvent.attendees.push(userId);
+//     await existingEvent.save();
+
+//     if (!responseSent) {
+//       responseSent = true;
+//       res.status(200).json({
+//         message: "Successfully registered",
+//         event: existingEvent,
+//       });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     if (!responseSent) {
+//       res.status(500).json({ message: "Error registering for event" });
+//     }
+//   }
+// };
+
 export const registerEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { userId } = req.body;
-
-    // Prevent multiple response attempts
-    let responseSent = false;
-
-    // Check for existing registration
-    const existingEvent = await Event.findById(eventId);
-    if (!existingEvent) {
-      if (!responseSent) {
-        responseSent = true;
-        return res.status(404).json({ message: "Event not found" });
-      }
+    if (
+      !mongoose.Types.ObjectId.isValid(userId) ||
+      !mongoose.Types.ObjectId.isValid(eventId)
+    ) {
+      return res.status(400).json({ message: "Invalid eventId or userId" });
     }
 
-    if (existingEvent.attendees.includes(userId)) {
-      if (!responseSent) {
-        responseSent = true;
-        return res.status(400).json({ message: "Already registered" });
-      }
-    }
+    // Check if event exists
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
-    // Add user to attendees
-    existingEvent.attendees.push(userId);
-    await existingEvent.save();
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!responseSent) {
-      responseSent = true;
-      res.status(200).json({
-        message: "Successfully registered",
-        event: existingEvent,
-      });
-    }
+    // Prevent duplicate registration
+    if (event.registered.includes(userId))
+      return res.status(400).json({ message: "User already registered" });
+
+    // Update Event Schema (Push user to registered array)
+    event.registered.push(userId);
+    await event.save();
+
+    // Update User Schema (Push event to registeredEvents array)
+    user.registeredEvents.push({ eventId, status: "Registered" });
+    await user.save();
+    res.status(200).json({ message: "Registered successfully!" });
   } catch (error) {
-    console.error(error);
-    if (!responseSent) {
-      res.status(500).json({ message: "Error registering for event" });
-    }
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getSearchResults = async (req, res) => {
+  try {
+    const { name } = req.query;
+    let query = {};
+    if (name) query.name = { $regex: `^${req.query.name}`, $options: "i" };
+    const events = await Event.find(query);
+    res.status(200).json({ success: true, events });
+    return events;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Server Error", error });
   }
 };

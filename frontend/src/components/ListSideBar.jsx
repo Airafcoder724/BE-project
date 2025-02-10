@@ -11,7 +11,11 @@ export default function ListSidebar() {
       }`}
     >
       <div className="flex justify-between items-center mb-4">
-        <span className={`font-semibold ${isOpen ? "block" : "hidden"}`}>
+        <span
+          className={` ml-3 text-[20px] font-semibold ${
+            isOpen ? "block" : "hidden"
+          }`}
+        >
           My Lists
         </span>
         <button

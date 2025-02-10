@@ -17,6 +17,8 @@ import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ForgotPasswordPage from "./pages/ForgetPasswordPage";
 import UserList from "./pages/UserList";
 import UserSubmissions from "./pages/UserSubmissions";
+import StorePage from "./pages/StorePage";
+import EventDetailPage from "./pages/EventDetailPage";
 function App() {
   const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
@@ -114,6 +116,15 @@ function App() {
             }
           />
 
+          <Route
+            path="/store"
+            element={
+              <ProtectedRoutes>
+                <StorePage />
+              </ProtectedRoutes>
+            }
+          />
+
           {/* Admin routes */}
           <Route
             path="/admin"
@@ -124,6 +135,7 @@ function App() {
             }
           />
           <Route path="/events/:domain" element={<EventPage />} />
+          <Route path="/event/:event-id" element={<EventDetailPage />} />
           {/* Admin routes */}
           <Route path="/:user_id/my-lists" element={<UserList />} />
           <Route path="/:user_id/submissions" element={<UserSubmissions />} />

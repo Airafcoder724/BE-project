@@ -1,11 +1,70 @@
-import React from "react";
-import AdminNavbar from "./AdminNavbar";
+import React, { useEffect, useState } from "react";
+import { useEventStore } from "../store/eventStore";
+import { formatDate } from "../utils/Date.js";
+import Pageination from "../components/Pageination.jsx";
 const AdminDashboard = () => {
+  const { events, fetchEvents } = useEventStore();
+  const [currentPage, setCurrentPage] = useState(0);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const PAGE_SIZE = 6;
+  const noOfEntries = events?.length || 0;
+  const noOfPages = Math.ceil(noOfEntries / PAGE_SIZE);
+
+  const startIdx = currentPage * PAGE_SIZE;
+  const endIdx = startIdx + PAGE_SIZE;
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+  const handleNextPageChange = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
+  const handlePrevPageChange = () => {
+    setCurrentPage((prev) => prev - 1);
+  };
+
+  // console.log(events[4]);
   return (
-    <div>
-      <h1 className="text-2xl font-bold mt-16 md:mt-0 absolute left-1/2 top-5 transform -translate-x-1/2">
-        Welcome to your admin dashboard{" "}
-      </h1>
+    <div className="flex-2 ml-64 p-6 overflow-x-auto">
+      <h2 className="text-2xl font-semibold mb-4 text-center">
+        Registered Events
+      </h2>
+      <div className="overflow-x-auto w-full">
+        <table className="min-w-full bg-white border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="py-2 px-4 border ">Event Name</th>
+              <th className="py-2 px-4 border">Date of Event</th>
+              <th className="py-2 px-4 border">Location</th>
+              <th className="py-2 px-4 border">Event Entries</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.slice(startIdx, endIdx).map((event) => (
+              <tr key={event._id} className="text-center border-t">
+                <td className="py-2 px-4 border text-blue-600">{event.name}</td>
+                <td className={`py-2 px-4 border`}>
+                  {formatDate(event.event_date)}
+                </td>
+                <td className="py-2 px-4 border">{event.location}</td>
+                <td className="py-2 px-4 border">
+                  {event.registered?.length ?? 0}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Pageination
+        noOfPages={noOfPages}
+        currentPage={currentPage}
+        handlePageChange={handlePageChange}
+        handleNextPageChange={handleNextPageChange}
+        handlePrevPageChange={handlePrevPageChange}
+      />
     </div>
   );
 };

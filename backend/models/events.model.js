@@ -22,19 +22,25 @@ const EventSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    event_time: {
+      type: String,
+      required: true, // 10:00 am, 2:00 pm, 6:00 pm etc.
+    },
     community: {
       type: String,
       required: true, // gdsc , ITSA , CASA
     },
     isOpen: {
       type: Boolean,
+      default: true,
     },
-    regestred: [
+    registered: [
       {
         type: mongoose.Schema.Types.ObjectId, // who join the event  or regitser it
         ref: "User",
       },
     ],
+    attendees: [],
     image_url: {
       type: String, // default image url if not provided by user.
     },
@@ -43,3 +49,8 @@ const EventSchema = new mongoose.Schema(
 );
 
 export const Event = mongoose.model("Events", EventSchema);
+
+// event_time: {
+//   type: String,
+//   required: true,
+// },

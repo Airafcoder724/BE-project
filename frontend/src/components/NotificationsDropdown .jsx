@@ -19,8 +19,7 @@ const NotificationsDropdown = () => {
     {
       id: 1,
       type: "challenge",
-      message:
-        "Completed a daily challenge for February LeetCoding Challenge 2025",
+      message: "Completed a daily challenge for February Challenge 2025",
       points: 10,
       time: "6 hours ago",
       icon: "🏆",
@@ -28,7 +27,7 @@ const NotificationsDropdown = () => {
     {
       id: 2,
       type: "contest",
-      message: "Weekly Contest 436 is approaching.",
+      message: "New Events are Aproching .",
       linkText: "Join here!",
       time: "8 hours ago",
       icon: "🏅",
@@ -36,8 +35,7 @@ const NotificationsDropdown = () => {
     {
       id: 3,
       type: "challenge",
-      message:
-        "Completed a daily challenge for February LeetCoding Challenge 2025",
+      message: "Register Exclusive Events just for you ",
       points: 10,
       time: "a day ago",
       icon: "🏆",

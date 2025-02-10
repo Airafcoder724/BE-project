@@ -10,7 +10,7 @@ import {
   Users,
   CalendarDays,
   ImageIcon,
-  Loader,
+  Clock,
 } from "lucide-react";
 import { useEventStore } from "../../store/eventStore";
 const CreateEvent = () => {
@@ -23,6 +23,7 @@ const CreateEvent = () => {
     location: "",
     community: "--select--",
     date: "",
+    time: "",
     image: null,
     imagePreview: "",
   });
@@ -49,8 +50,16 @@ const CreateEvent = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, description, domain, community, location, date, image } =
-      eventData;
+    const {
+      name,
+      description,
+      domain,
+      community,
+      location,
+      date,
+      time,
+      image,
+    } = eventData;
 
     if (
       !name ||
@@ -59,6 +68,7 @@ const CreateEvent = () => {
       community === "--select--" ||
       !location ||
       !date ||
+      !time ||
       !image
     ) {
       alert("Please fill in all the fields!");
@@ -142,6 +152,15 @@ const CreateEvent = () => {
               value={eventData.date}
               onChange={(e) =>
                 setEventData({ ...eventData, date: e.target.value })
+              }
+            />
+            <Input
+              icon={Clock}
+              type="string"
+              placeholder="Time of Event"
+              value={eventData.time}
+              onChange={(e) =>
+                setEventData({ ...eventData, time: e.target.value })
               }
             />
             <Input

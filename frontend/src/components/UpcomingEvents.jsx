@@ -5,7 +5,6 @@ import { useEventStore } from "../store/eventStore";
 
 const UpcomingEvents = () => {
   const { events } = useEventStore();
-
   const sortUpcomingEvents = (events) => {
     const currentDate = new Date();
     const fiveDaysFromNow = new Date(currentDate);
@@ -22,6 +21,13 @@ const UpcomingEvents = () => {
       .sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
   };
 
+  const handleRegistertion = (eventId) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    registerForEvent(eventId, user._id);
+  };
   // Usage
   const upcomingEventsData = sortUpcomingEvents(events);
 
@@ -44,6 +50,7 @@ const UpcomingEvents = () => {
             id={item.id}
             name={item.name}
             image={item.image}
+            handleRegistertion={handleRegistertion}
             new_price={item.new_price}
             old_price={item.old_price}
           />
