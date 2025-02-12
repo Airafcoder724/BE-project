@@ -202,6 +202,8 @@ export const registerEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { userId } = req.body;
+
+    // Input validation
     if (
       !mongoose.Types.ObjectId.isValid(userId) ||
       !mongoose.Types.ObjectId.isValid(eventId)
@@ -211,30 +213,69 @@ export const registerEvent = async (req, res) => {
 
     // Check if event exists
     const event = await Event.findById(eventId);
-    if (!event) return res.status(404).json({ message: "Event not found" });
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Check if event is open for registration
+    if (!event.isOpen) {
+      return res.status(400).json({ message: "Event registration is closed" });
+    }
 
     // Check if user exists
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    // Prevent duplicate registration
-    if (event.registered.includes(userId))
+    // Check for duplicate registration in both user and event
+    const isAlreadyRegistered = user.registeredEvents.some(
+      (reg) => reg.eventId.toString() === eventId
+    );
+    if (isAlreadyRegistered || event.registered.includes(userId)) {
       return res.status(400).json({ message: "User already registered" });
+    }
 
-    // Update Event Schema (Push user to registered array)
-    event.registered.push(userId);
-    await event.save();
+    // Create the registration entry
+    const registrationEntry = {
+      eventId,
+      status: "Registered", // Ensure correct spelling matching the enum
+    };
 
-    // Update User Schema (Push event to registeredEvents array)
-    user.registeredEvents.push({ eventId, status: "Registered" });
-    await user.save();
-    res.status(200).json({ message: "Registered successfully!" });
+    // Update both documents in a transaction
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        // Update Event
+        await Event.findByIdAndUpdate(
+          eventId,
+          { $push: { registered: userId } },
+          { session }
+        );
+
+        // Update User
+        await User.findByIdAndUpdate(
+          userId,
+          { $push: { registeredEvents: registrationEntry } },
+          { session }
+        );
+      });
+    } finally {
+      await session.endSession();
+    }
+
+    res.status(200).json({
+      message: "Registered successfully!",
+      status: "Registered",
+    });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    console.error("Error registering for event:", error);
+    res.status(500).json({
+      message: "Failed to register for event",
+      error: error.message,
+    });
   }
 };
-
 export const getSearchResults = async (req, res) => {
   try {
     const { name } = req.query;

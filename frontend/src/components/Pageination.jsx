@@ -8,7 +8,7 @@ const Pageination = ({
   handlePrevPageChange,
 }) => {
   return (
-    <div className="flex flex-col justify-center items-center p-5 ">
+    <div className="flex flex-col justify-center items-center  p-5 ">
       <div className="flex p-2 justify-center items-center ">
         <button
           disabled={currentPage === 0}

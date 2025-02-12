@@ -3,6 +3,7 @@ import { connectDb } from "./db/connectDb.js";
 import dotenv from "dotenv";
 import authroutes from "./routes/auth.routes.js";
 import eventroutes from "./routes/event.routes.js";
+import userroutes from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
@@ -16,6 +17,7 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authroutes);
 app.use("/api/events", eventroutes);
+app.use("/api/users", userroutes);
 
 app.listen(PORT, () => {
   connectDb();

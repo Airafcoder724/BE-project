@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useEventStore } from "../store/eventStore";
 import { formatDate } from "../utils/Date.js";
 import Pageination from "../components/Pageination.jsx";
+import { Link } from "react-router-dom";
 const AdminDashboard = () => {
   const { events, fetchEvents } = useEventStore();
   const [currentPage, setCurrentPage] = useState(0);
@@ -26,7 +27,6 @@ const AdminDashboard = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
-  // console.log(events[4]);
   return (
     <div className="flex-2 ml-64 p-6 overflow-x-auto">
       <h2 className="text-2xl font-semibold mb-4 text-center">
@@ -44,13 +44,25 @@ const AdminDashboard = () => {
           </thead>
           <tbody>
             {events.slice(startIdx, endIdx).map((event) => (
-              <tr key={event._id} className="text-center border-t">
-                <td className="py-2 px-4 border text-blue-600">{event.name}</td>
-                <td className={`py-2 px-4 border`}>
+              <tr
+                key={event._id}
+                className="border-t text-gray-600 hover:bg-gray-100 transition duration-200"
+              >
+                <td className="py-3 px-6 border text-blue-600 font-medium">
+                  <Link
+                    to={`/admin/events/${event._id}`}
+                    className="hover:underline"
+                  >
+                    {event.name}
+                  </Link>
+                </td>
+                <td className="py-3 px-6 border text-center">
                   {formatDate(event.event_date)}
                 </td>
-                <td className="py-2 px-4 border">{event.location}</td>
-                <td className="py-2 px-4 border">
+                <td className="py-3 px-6 border text-center">
+                  {event.location}
+                </td>
+                <td className="py-3 px-6 border text-center">
                   {event.registered?.length ?? 0}
                 </td>
               </tr>

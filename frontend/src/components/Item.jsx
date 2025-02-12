@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Clock, MapPin, Calendar } from "lucide-react";
 import { formatDate } from "../utils/Date";
+import CoinDialog from "./CoinDialog";
 const Item = ({ event, handleRegistertion, userId }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const isRegistered = event.registered?.includes(userId);
   const formatedDate = formatDate(event.event_date);
 
@@ -14,6 +17,12 @@ const Item = ({ event, handleRegistertion, userId }) => {
       return words.slice(0, wordCount).join(" ") + "...";
     }
     return text;
+  };
+
+  const handleClick = () => {
+    handleRegistertion(event._id);
+    setIsDialogOpen(true);
+    setTimeout(() => setIsDialogOpen(false), 3000); // Close after 3 seconds
   };
 
   return (
@@ -70,7 +79,7 @@ const Item = ({ event, handleRegistertion, userId }) => {
         {/* Register Button */}
         {!isRegistered ? (
           <button
-            onClick={() => handleRegistertion(event._id)}
+            onClick={() => handleClick()}
             className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors duration-300 font-medium"
           >
             Register
@@ -81,6 +90,10 @@ const Item = ({ event, handleRegistertion, userId }) => {
           </button>
         )}
       </div>
+      <CoinDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </div>
   );
 };

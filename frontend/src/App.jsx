@@ -19,6 +19,8 @@ import UserList from "./pages/UserList";
 import UserSubmissions from "./pages/UserSubmissions";
 import StorePage from "./pages/StorePage";
 import EventDetailPage from "./pages/EventDetailPage";
+import MangeUsers from "./Admin/page/MangeUsers";
+import ManageEventAttendees from "./Admin/page/ManageEventAttendees";
 function App() {
   const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
@@ -141,6 +143,11 @@ function App() {
           <Route path="/:user_id/submissions" element={<UserSubmissions />} />
 
           <Route path="/admin/create-event" element={<CreateEvent />} />
+          <Route path="/admin/mange" element={<MangeUsers />} />
+          <Route
+            path="/admin/events/:eventId"
+            element={<ManageEventAttendees />}
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

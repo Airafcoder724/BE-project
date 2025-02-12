@@ -10,7 +10,7 @@ axios.defaults.withCredentials = true;
 
 export const useEventStore = create((set) => ({
   events: [],
-  event: {},
+  event: null,
   error: null,
   isLoading: true,
   domainEvents: [],
@@ -45,21 +45,22 @@ export const useEventStore = create((set) => ({
         userId,
       });
 
-      set((state) => ({
-        events: state.events.map((event) =>
-          event._id === eventId
-            ? {
-                ...event,
-                registered: event.registered
-                  ? [...event.registered, userId]
-                  : [userId],
-              }
-            : event
-        ),
-        isLoading: false,
-      }));
+      // Only update the UI if the registration was successful
+      if (response.data.status === "Registered") {
+        set((state) => ({
+          events: state.events.map((event) =>
+            event._id === eventId
+              ? {
+                  ...event,
+                  registered: [...(event.registered || []), userId],
+                }
+              : event
+          ),
+        }));
+      }
 
-      console.log(response.data);
+      set({ isLoading: false });
+      return response.data;
     } catch (error) {
       set({
         isLoading: false,

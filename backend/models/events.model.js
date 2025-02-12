@@ -24,7 +24,7 @@ const EventSchema = new mongoose.Schema(
     },
     event_time: {
       type: String,
-      required: true, // 10:00 am, 2:00 pm, 6:00 pm etc.
+      required: false, // 10:00 am, 2:00 pm, 6:00 pm etc.
     },
     community: {
       type: String,

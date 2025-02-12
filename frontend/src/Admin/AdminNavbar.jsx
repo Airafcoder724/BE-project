@@ -31,11 +31,13 @@ const AdminNavbar = () => {
           md:translate-x-0 z-50`}
         >
           <div className="flex items-center justify-between mr-5 p-4 border-b border-gray-700">
-            <img
-              src={logoImage}
-              alt="Logo"
-              className="h-16 w-16 rounded-full"
-            />
+            <Link to="/admin">
+              <img
+                src={logoImage}
+                alt="Logo"
+                className="h-16 w-16 rounded-full"
+              />
+            </Link>
             <Menu onClick={() => handleSidebar()} size={24} />
           </div>
           <ul className="mt-4 space-y-4">
@@ -50,11 +52,11 @@ const AdminNavbar = () => {
             </li>
             <li>
               <Link
-                to="/admin/edit-events"
+                to="/admin/mange"
                 className="block py-2 px-4 hover:bg-gray-700"
                 onClick={() => setIsOpen(false)}
               >
-                Manage Events
+                Manage
               </Link>
             </li>
             <li>

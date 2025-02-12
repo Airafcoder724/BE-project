@@ -32,11 +32,14 @@ const userSchema = new mongoose.Schema(
         eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Events" },
         status: {
           type: String,
-          enum: ["Registered", "Pending", "Cancelled"],
-          default: "Registered",
+          enum: ["Registered", "Completed", "Cancelled"],
         },
       },
     ],
+    points: {
+      type: Number,
+      default: 0,
+    },
     resetPasswordToken: String,
     resetPasswordExpireAtDate: Date,
     verificationToken: String,
